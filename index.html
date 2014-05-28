@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<title>sample1-1</title>
+<script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+<script>
+  window.onload = function() {
+  var peer = new Peer({
+    key: 'peerjs', 
+    debug:5,
+    host: "localhost",
+    port: 9000,
+  });
+  peer.on("open", function(id) {
+    console.log("opened", id);
+    document.getElementById("my_id").innerHTML = id;
+    document.getElementById("connect").addEventListener("click", function(e){
+      var text = document.getElementById("id").value;
+      console.log(text);
+      peer.connect(text);
+      });
+      });
+  var con;
+  document.getElementById("send").addEventListener("click", function(e){
+    var text = document.getElementById("message").value;
+    console.log(text);
+    con.send(text);
+    });
+  peer.on('connection', function(conn) {
+    con = conn;
+    conn.on("open", function(){
+      console.log("open :" , conn);
+      conn.on('data', function(data){
+        console.log("data :" , data);
+        document.getElementById("receive_message").innerHTML = data;
+      });
+      conn.send("hello!!");
+    });
+    console.log("connected");
+  });
+  };
+</script>
+<body>
+    <div> MY ID is </div>
+    <div id="my_id"></div>
+    <div id="receive_message"></div>
+    <form>
+      <input id="id" type="text" size="25" value="input id" /> 
+      <input id="connect" type="button" value="connect" /> 
+    </form>
+    <form>
+      <input id="message" type="text" size="25" value="message" /> 
+      <input id="send" type="button" value="send" /> 
+    </form>
+</body>
+</html>
+
